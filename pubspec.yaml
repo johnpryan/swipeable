@@ -1,8 +1,8 @@
 name: swipeable
 description: A widget that emits events when swiped past a threshold
 version: 1.0.0
-author:
-homepage:
+author: John Ryan <john.p.ryan4@gmail.com>
+homepage: https://github.com/johnpryan/swipeable
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
