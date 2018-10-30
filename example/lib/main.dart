@@ -89,7 +89,9 @@ class SwipeableDemoState extends State<SwipeableDemo> {
                     height: 12.0,
                     decoration: new BoxDecoration(
                       shape: BoxShape.circle,
-                      color: rightSelected ? Colors.lightGreen[500] : Colors.grey[600],
+                      color: rightSelected
+                          ? Colors.lightGreen[500]
+                          : Colors.grey[600],
                     ),
                   ),
                 ),

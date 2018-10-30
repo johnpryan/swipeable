@@ -24,7 +24,7 @@ class Swipeable extends StatefulWidget {
   });
 
   State<StatefulWidget> createState() {
-    return new _SwipeableState();
+    return _SwipeableState();
   }
 }
 
@@ -37,8 +37,8 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
 
   void initState() {
     super.initState();
-    _moveController = new AnimationController(
-        duration: Duration(milliseconds: 200), vsync: this);
+    _moveController =
+        AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     _moveAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(1.0, 0.0))
         .animate(_moveController);
 
@@ -81,7 +81,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
         if (_dragExtent > 0 && !_pastLeftThreshold) {
           _pastLeftThreshold = true;
 
-          if(widget.onSwipeLeft != null){
+          if (widget.onSwipeLeft != null) {
             widget.onSwipeLeft();
           }
         }
@@ -103,7 +103,6 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
         _pastRightThreshold = false;
       }
 
-
       _moveController.animateTo(newPos);
     }
   }
@@ -119,9 +118,9 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
 
   void _updateMoveAnimation() {
     var end = _dragExtent.sign;
-    _moveAnimation = new Tween<Offset>(
-        begin: new Offset(0.0, 0.0), end: new Offset(end, 0.0))
-        .animate(_moveController);
+    _moveAnimation =
+        Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset(end, 0.0))
+            .animate(_moveController);
   }
 
   Widget build(BuildContext context) {
@@ -138,7 +137,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: _handleDragEnd,
       behavior: HitTestBehavior.opaque,
-      child: new Stack(
+      child: Stack(
         children: children,
       ),
     );
