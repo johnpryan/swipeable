@@ -2,8 +2,6 @@
 
 A widget that emits events when swiped past a threshold
 
-## Getting Started
+## Usage
 
-For help getting started with Flutter, view our online [documentation](https://flutter.io/).
-
-For help on editing package code, view the [documentation](https://flutter.io/developing-packages/).
+see the /example directory
