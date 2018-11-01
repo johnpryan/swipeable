@@ -1,5 +1,4 @@
 library swipeable;
-
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/material.dart';
 class Swipeable extends StatefulWidget {
   final Widget child;
   final Widget background;
+  final Widget secondaryBackground;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
   final VoidCallback onSwipeCancel;
@@ -16,6 +16,7 @@ class Swipeable extends StatefulWidget {
   Swipeable({
     this.child,
     this.background,
+    this.secondaryBackground,
     this.onSwipeLeft,
     this.onSwipeRight,
     this.onSwipeCancel,
@@ -25,6 +26,30 @@ class Swipeable extends StatefulWidget {
 
   State<StatefulWidget> createState() {
     return _SwipeableState();
+  }
+}
+
+class _SwipeableClipper extends CustomClipper<Rect> {
+  _SwipeableClipper({@required this.moveAnimation})
+      : assert(moveAnimation != null),
+        super(reclip: moveAnimation);
+
+  final Animation<Offset> moveAnimation;
+
+  @override
+  Rect getClip(Size size) {
+    final double offset = moveAnimation.value.dx * size.width;
+    if (offset < 0)
+      return Rect.fromLTRB(size.width + offset, 0.0, size.width, size.height);
+    return Rect.fromLTRB(0.0, 0.0, offset, size.height);
+  }
+
+  @override
+  Rect getApproximateClipRect(Size size) => getClip(size);
+
+  @override
+  bool shouldReclip(_SwipeableClipper oldClipper) {
+    return oldClipper.moveAnimation.value != moveAnimation.value;
   }
 }
 
@@ -124,8 +149,20 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   }
 
   Widget build(BuildContext context) {
+    var background = widget.background;
+    if (widget.secondaryBackground != null) {
+      if (_dragExtent < 0) {
+        background = widget.secondaryBackground;
+      }
+    }
+
     var children = <Widget>[
-      widget.background,
+      Positioned.fill(
+          child: ClipRect(
+              clipper: _SwipeableClipper(
+                moveAnimation: _moveAnimation,
+              ),
+              child: background)),
       SlideTransition(
         position: _moveAnimation,
         child: widget.child,
