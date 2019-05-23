@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:swipeable/swipeable.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new SwipeableDemo(),
+      home: SwipeableDemo(),
     );
   }
 }
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
 class SwipeableDemo extends StatefulWidget {
   @override
   SwipeableDemoState createState() {
-    return new SwipeableDemoState();
+    return SwipeableDemoState();
   }
 }
 
@@ -30,6 +30,7 @@ class SwipeableDemoState extends State<SwipeableDemo> {
   void initState() {
     leftSelected = false;
     rightSelected = false;
+    super.initState();
   }
 
   Widget build(BuildContext context) {
@@ -49,14 +50,14 @@ class SwipeableDemoState extends State<SwipeableDemo> {
               threshold: 60.0,
               onSwipeLeft: () {
                 setState(() {
-                  leftSelected = true;
-                  rightSelected = false;
+                  rightSelected = true;
+                  leftSelected = false;
                 });
               },
               onSwipeRight: () {
                 setState(() {
-                  leftSelected = false;
-                  rightSelected = true;
+                  rightSelected = false;
+                  leftSelected = true;
                 });
               },
               child: Container(
@@ -76,18 +77,18 @@ class SwipeableDemoState extends State<SwipeableDemo> {
                     ),
                     color: Colors.grey[300]),
                 child: ListTile(
-                  leading: new Container(
+                  leading: Container(
                     width: 12.0,
                     height: 12.0,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: leftSelected ? Colors.blue[500] : Colors.grey[600],
                     ),
                   ),
-                  trailing: new Container(
+                  trailing: Container(
                     width: 12.0,
                     height: 12.0,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: rightSelected
                           ? Colors.lightGreen[500]

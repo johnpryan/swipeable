@@ -57,54 +57,55 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     var delta = details.primaryDelta;
     var oldDragExtent = _dragExtent;
     _dragExtent += delta;
+
     if (oldDragExtent.sign != _dragExtent.sign) {
       setState(() {
         _updateMoveAnimation();
       });
     }
-    if (!_moveController.isAnimating) {
-      var movePastThresholdPixels = widget.threshold;
-      var newPos = _dragExtent.abs() / context.size.width;
 
-      if (_dragExtent.abs() > movePastThresholdPixels) {
-        // how many "thresholds" past the threshold we are. 1 = the threshold 2
-        // = two thresholds.
-        var n = _dragExtent.abs() / movePastThresholdPixels;
+    var movePastThresholdPixels = widget.threshold;
+    var newPos = _dragExtent.abs() / context.size.width;
 
-        // Take the number of thresholds past the threshold, and reduce this
-        // number
-        var reducedThreshold = math.pow(n, 0.3);
+    if (_dragExtent.abs() > movePastThresholdPixels) {
+      // how many "thresholds" past the threshold we are. 1 = the threshold 2
+      // = two thresholds.
+      var n = _dragExtent.abs() / movePastThresholdPixels;
 
-        var adjustedPixelPos = movePastThresholdPixels * reducedThreshold;
-        newPos = adjustedPixelPos / context.size.width;
+      // Take the number of thresholds past the threshold, and reduce this
+      // number
+      var reducedThreshold = math.pow(n, 0.3);
 
-        if (_dragExtent > 0 && !_pastLeftThreshold) {
-          _pastLeftThreshold = true;
+      var adjustedPixelPos = movePastThresholdPixels * reducedThreshold;
+      newPos = adjustedPixelPos / context.size.width;
 
-          if (widget.onSwipeLeft != null) {
-            widget.onSwipeLeft();
-          }
+      if (_dragExtent > 0 && !_pastLeftThreshold) {
+        _pastLeftThreshold = true;
+
+        if (widget.onSwipeRight != null) {
+          widget.onSwipeRight();
         }
-        if (_dragExtent < 0 && !_pastRightThreshold) {
-          _pastRightThreshold = true;
-
-          if (widget.onSwipeRight != null) {
-            widget.onSwipeRight();
-          }
-        }
-      } else {
-        // Send a cancel event if the user has swiped back underneath the threshold
-        if (_pastLeftThreshold || _pastRightThreshold) {
-          if (widget.onSwipeCancel != null) {
-            widget.onSwipeCancel();
-          }
-        }
-        _pastLeftThreshold = false;
-        _pastRightThreshold = false;
       }
+      if (_dragExtent < 0 && !_pastRightThreshold) {
+        _pastRightThreshold = true;
 
-      _moveController.animateTo(newPos);
+        if (widget.onSwipeLeft != null) {
+          widget.onSwipeLeft();
+        }
+      }
+    } else {
+      // Send a cancel event if the user has swiped back underneath the
+      // threshold
+      if (_pastLeftThreshold || _pastRightThreshold) {
+        if (widget.onSwipeCancel != null) {
+          widget.onSwipeCancel();
+        }
+      }
+      _pastLeftThreshold = false;
+      _pastRightThreshold = false;
     }
+
+    _moveController.value = newPos;
   }
 
   void _handleDragEnd(DragEndDetails details) {
