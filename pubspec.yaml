@@ -2,12 +2,13 @@ name: swipeable
 description: >
   A widget that emits events when swiped past a threshold. Can be used to add
   quick actions for ListTiles.
-version: 1.0.1
+version: 1.0.2
 author: John Ryan <john.p.ryan4@gmail.com>
 homepage: https://github.com/johnpryan/swipeable
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.0.0 <3.0.0"
+  flutter: ^1.12.0
 
 dependencies:
   flutter:

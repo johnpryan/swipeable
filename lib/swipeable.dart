@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class Swipeable extends StatefulWidget {
   final Widget child;
   final Widget background;
+  final VoidCallback onSwipeStart;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
   final VoidCallback onSwipeCancel;
@@ -16,6 +17,7 @@ class Swipeable extends StatefulWidget {
   Swipeable({
     this.child,
     this.background,
+    this.onSwipeStart,
     this.onSwipeLeft,
     this.onSwipeRight,
     this.onSwipeCancel,
@@ -47,11 +49,15 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   }
 
   void dispose() {
-    super.dispose();
     _moveController.dispose();
+    super.dispose();
   }
 
-  void _handleDragStart(DragStartDetails details) {}
+  void _handleDragStart(DragStartDetails details) {
+    if (widget.onSwipeStart != null) {
+      widget.onSwipeStart();
+    }
+  }
 
   void _handleDragUpdate(DragUpdateDetails details) {
     var delta = details.primaryDelta;
