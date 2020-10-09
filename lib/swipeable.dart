@@ -15,8 +15,8 @@ class Swipeable extends StatefulWidget {
   final double threshold;
 
   Swipeable({
-    this.child,
-    this.background,
+    @required this.child,
+    @required this.background,
     this.onSwipeStart,
     this.onSwipeLeft,
     this.onSwipeRight,
