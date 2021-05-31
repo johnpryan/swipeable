@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/ereio/development/sdks/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/ereio/development/swipeable/example"
+export "FLUTTER_ROOT=/Users/ereio/fvm/versions/2.0.6"
+export "FLUTTER_APPLICATION_PATH=/Users/ereio/development/syphon-org/forks/swipeable/example"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"
 export "SYMROOT=${SOURCE_ROOT}/../build/ios"

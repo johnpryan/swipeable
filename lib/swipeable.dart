@@ -54,7 +54,9 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   }
 
   void _handleDragStart(DragStartDetails details) {
-    widget.onSwipeStart!();
+    if (widget.onSwipeStart != null) {
+      widget.onSwipeStart!();
+    }
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
@@ -86,18 +88,24 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
       if (_dragExtent > 0 && !_pastLeftThreshold) {
         _pastLeftThreshold = true;
 
-        widget.onSwipeRight!();
+        if (widget.onSwipeRight != null) {
+          widget.onSwipeRight!();
+        }
       }
       if (_dragExtent < 0 && !_pastRightThreshold) {
         _pastRightThreshold = true;
 
-        widget.onSwipeLeft!();
+        if (widget.onSwipeLeft != null) {
+          widget.onSwipeLeft!();
+        }
       }
     } else {
       // Send a cancel event if the user has swiped back underneath the
       // threshold
       if (_pastLeftThreshold || _pastRightThreshold) {
-        widget.onSwipeCancel!();
+        if (widget.onSwipeCancel != null) {
+          widget.onSwipeCancel!();
+        }
       }
       _pastLeftThreshold = false;
       _pastRightThreshold = false;
@@ -110,7 +118,9 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     _moveController.animateTo(0.0, duration: Duration(milliseconds: 200));
     _dragExtent = 0.0;
 
-    widget.onSwipeEnd!();
+    if (widget.onSwipeEnd != null) {
+      widget.onSwipeEnd!();
+    }
   }
 
   void _updateMoveAnimation() {
