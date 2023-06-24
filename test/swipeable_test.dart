@@ -24,7 +24,7 @@ class TestApp extends StatefulWidget {
 }
 
 class _TestAppState extends State<TestApp> {
-  String _state;
+  late String _state;
 
   initState() {
     super.initState();
@@ -49,11 +49,11 @@ class _TestAppState extends State<TestApp> {
                 color: Colors.white,
               ),
               onSwipeLeft: () => setState(() {
-                    _state = "left";
-                  }),
+                _state = "left";
+              }),
               onSwipeRight: () => setState(() {
-                    _state = "right";
-                  }),
+                _state = "right";
+              }),
             ),
           ),
         ),
