@@ -4,7 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-enum SwipeableDirection { LEFT, RIGHT }
+enum SwipeableDirection { Left, Right }
 
 class Swipeable extends StatefulWidget {
   final Widget child;
@@ -84,7 +84,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     double newPos = _dragExtent.abs() / context.size!.width;
 
     SwipeableDirection swipingDirection =
-        _dragExtent > 0 ? SwipeableDirection.RIGHT : SwipeableDirection.LEFT;
+        _dragExtent > 0 ? SwipeableDirection.Right : SwipeableDirection.Left;
 
     if (widget.direction != null && widget.direction != swipingDirection) {
       return;
