@@ -4,6 +4,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+enum SwipeableDirection { LEFT, RIGHT }
+
 class Swipeable extends StatefulWidget {
   final Widget child;
   final Widget background;
@@ -13,6 +15,7 @@ class Swipeable extends StatefulWidget {
   final VoidCallback? onSwipeCancel;
   final VoidCallback? onSwipeEnd;
   final double threshold;
+  final SwipeableDirection? direction;
 
   const Swipeable({
     Key? key,
@@ -24,6 +27,7 @@ class Swipeable extends StatefulWidget {
     this.onSwipeCancel,
     this.onSwipeEnd,
     this.threshold = 64.0,
+    this.direction,
   }) : super(key: key);
 
   @override
@@ -66,8 +70,8 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
-    var delta = details.primaryDelta;
-    var oldDragExtent = _dragExtent;
+    final delta = details.primaryDelta;
+    final oldDragExtent = _dragExtent;
     _dragExtent += delta!;
 
     if (oldDragExtent.sign != _dragExtent.sign) {
@@ -76,19 +80,26 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
       });
     }
 
-    var movePastThresholdPixels = widget.threshold;
-    var newPos = _dragExtent.abs() / context.size!.width;
+    final movePastThresholdPixels = widget.threshold;
+    double newPos = _dragExtent.abs() / context.size!.width;
+
+    SwipeableDirection swipingDirection =
+        _dragExtent > 0 ? SwipeableDirection.RIGHT : SwipeableDirection.LEFT;
+
+    if (widget.direction != null && widget.direction != swipingDirection) {
+      return;
+    }
 
     if (_dragExtent.abs() > movePastThresholdPixels) {
       // how many "thresholds" past the threshold we are. 1 = the threshold 2
       // = two thresholds.
-      var n = _dragExtent.abs() / movePastThresholdPixels;
+      final n = _dragExtent.abs() / movePastThresholdPixels;
 
       // Take the number of thresholds past the threshold, and reduce this
       // number
-      var reducedThreshold = math.pow(n, 0.3);
+      final reducedThreshold = math.pow(n, 0.3);
 
-      var adjustedPixelPos = movePastThresholdPixels * reducedThreshold;
+      final adjustedPixelPos = movePastThresholdPixels * reducedThreshold;
       newPos = adjustedPixelPos / context.size!.width;
 
       if (_dragExtent > 0 && !_pastLeftThreshold) {
@@ -98,6 +109,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
           widget.onSwipeRight!();
         }
       }
+
       if (_dragExtent < 0 && !_pastRightThreshold) {
         _pastRightThreshold = true;
 
