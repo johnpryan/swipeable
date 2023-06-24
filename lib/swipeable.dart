@@ -14,6 +14,7 @@ class Swipeable extends StatefulWidget {
   final VoidCallback? onSwipeRight;
   final VoidCallback? onSwipeCancel;
   final VoidCallback? onSwipeEnd;
+  final VoidCallback? onPastThreshold;
   final double threshold;
   final SwipeableDirection? direction;
 
@@ -28,6 +29,7 @@ class Swipeable extends StatefulWidget {
     this.onSwipeEnd,
     this.threshold = 64.0,
     this.direction,
+    this.onPastThreshold,
   }) : super(key: key);
 
   @override
@@ -46,8 +48,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _moveController = AnimationController(
-        duration: const Duration(milliseconds: 200), vsync: this);
+    _moveController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
     _moveAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(1.0, 0.0),
@@ -83,8 +84,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     final movePastThresholdPixels = widget.threshold;
     double newPos = _dragExtent.abs() / context.size!.width;
 
-    SwipeableDirection swipingDirection =
-        _dragExtent > 0 ? SwipeableDirection.Right : SwipeableDirection.Left;
+    SwipeableDirection swipingDirection = _dragExtent > 0 ? SwipeableDirection.Right : SwipeableDirection.Left;
 
     if (widget.direction != null && widget.direction != swipingDirection) {
       return;
@@ -105,17 +105,15 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
       if (_dragExtent > 0 && !_pastLeftThreshold) {
         _pastLeftThreshold = true;
 
-        if (widget.onSwipeRight != null) {
-          widget.onSwipeRight!();
-        }
+        widget.onSwipeRight?.call();
+        widget.onPastThreshold?.call();
       }
 
       if (_dragExtent < 0 && !_pastRightThreshold) {
         _pastRightThreshold = true;
 
-        if (widget.onSwipeLeft != null) {
-          widget.onSwipeLeft!();
-        }
+        widget.onSwipeLeft?.call();
+        widget.onPastThreshold?.call();
       }
     } else {
       // Send a cancel event if the user has swiped back underneath the
