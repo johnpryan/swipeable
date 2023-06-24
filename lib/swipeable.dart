@@ -7,15 +7,40 @@ import 'package:flutter/material.dart';
 enum SwipeableDirection { Left, Right }
 
 class Swipeable extends StatefulWidget {
+  /// The widget that will be swiped
   final Widget child;
+
+  /// The background that will show behind the [child] when swiping
   final Widget background;
+
+  /// Called when swipe starts
   final VoidCallback? onSwipeStart;
+
+  /// Called when swiped left, see also [onPastThresholdEnd]
   final VoidCallback? onSwipeLeft;
+
+  /// Called when swiped right, see also [onPastThresholdEnd]
   final VoidCallback? onSwipeRight;
+
+  /// Called when swipe is canceled
   final VoidCallback? onSwipeCancel;
+
+  /// Called when swipe ends, regardless of whether or not the threshold was met
   final VoidCallback? onSwipeEnd;
-  final VoidCallback? onPastThreshold;
+
+  /// Called when the user has dragged past the threshold, see also [onPastThresholdReleased] and [onPastThresholdEnd]
+  final VoidCallback? onPastThresholdStart;
+
+  /// Called when the user has dragged past the threshold and then released, see also [onPastThresholdReleased] and [onPastThresholdEnd]
+  final VoidCallback? onPastThresholdReleased;
+
+  /// Called when the user has dragged past the threshold and then animated back, see also [onPastThresholdReleased] and [onPastThresholdStart]
+  final VoidCallback? onPastThresholdEnd;
+
+  /// The threshold before the [child] is considered swiped
   final double threshold;
+
+  /// The direction that the widget can be swiped in, leave blank for both
   final SwipeableDirection? direction;
 
   const Swipeable({
@@ -29,7 +54,9 @@ class Swipeable extends StatefulWidget {
     this.onSwipeEnd,
     this.threshold = 64.0,
     this.direction,
-    this.onPastThreshold,
+    this.onPastThresholdStart,
+    this.onPastThresholdEnd,
+    this.onPastThresholdReleased,
   }) : super(key: key);
 
   @override
@@ -48,7 +75,8 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _moveController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
+    _moveController = AnimationController(
+        duration: const Duration(milliseconds: 200), vsync: this);
     _moveAnimation = Tween<Offset>(
       begin: Offset.zero,
       end: const Offset(1.0, 0.0),
@@ -84,7 +112,8 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     final movePastThresholdPixels = widget.threshold;
     double newPos = _dragExtent.abs() / context.size!.width;
 
-    SwipeableDirection swipingDirection = _dragExtent > 0 ? SwipeableDirection.Right : SwipeableDirection.Left;
+    SwipeableDirection swipingDirection =
+        _dragExtent > 0 ? SwipeableDirection.Right : SwipeableDirection.Left;
 
     if (widget.direction != null && widget.direction != swipingDirection) {
       return;
@@ -106,14 +135,14 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
         _pastLeftThreshold = true;
 
         widget.onSwipeRight?.call();
-        widget.onPastThreshold?.call();
+        widget.onPastThresholdStart?.call();
       }
 
       if (_dragExtent < 0 && !_pastRightThreshold) {
         _pastRightThreshold = true;
 
         widget.onSwipeLeft?.call();
-        widget.onPastThreshold?.call();
+        widget.onPastThresholdStart?.call();
       }
     } else {
       // Send a cancel event if the user has swiped back underneath the
@@ -131,14 +160,26 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   }
 
   void _handleDragEnd(DragEndDetails details) {
-    _moveController.animateTo(
+    final pastThreshold = _pastLeftThreshold || _pastRightThreshold;
+
+    _moveController
+        .animateTo(
       0.0,
       duration: const Duration(milliseconds: 200),
-    );
+    )
+        .then((value) {
+      if (pastThreshold) {
+        widget.onPastThresholdEnd?.call();
+      }
+    });
     _dragExtent = 0.0;
 
     if (widget.onSwipeEnd != null) {
       widget.onSwipeEnd!();
+    }
+
+    if (pastThreshold) {
+      widget.onPastThresholdReleased?.call();
     }
   }
 
