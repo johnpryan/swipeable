@@ -37,6 +37,9 @@ class Swipeable extends StatefulWidget {
   /// Called when the user has dragged past the threshold and then animated back, see also [onPastThresholdReleased] and [onPastThresholdStart]
   final VoidCallback? onPastThresholdEnd;
 
+  /// Called when the user is dragging. It reports the distance in pixels.
+  final void Function(double distance)? onDragged;
+
   /// The threshold before the [child] is considered swiped
   final double threshold;
 
@@ -57,6 +60,7 @@ class Swipeable extends StatefulWidget {
     this.onPastThresholdStart,
     this.onPastThresholdEnd,
     this.onPastThresholdReleased,
+    this.onDragged,
   }) : super(key: key);
 
   @override
@@ -71,6 +75,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   late Animation<Offset> _moveAnimation;
   bool _pastLeftThreshold = false;
   bool _pastRightThreshold = false;
+  double _totalDistanceMoved = 0.0; // Track the total distance moved
 
   @override
   void initState() {
@@ -84,11 +89,18 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
 
     var controllerValue = 0.0;
     _moveController.animateTo(controllerValue);
+
+    _moveController.addListener(_listenerChanged);
+  }
+
+  _listenerChanged() {
+    widget.onDragged?.call(_totalDistanceMoved.abs().roundToDouble());
   }
 
   @override
   void dispose() {
     _moveController.dispose();
+    _moveAnimation.removeListener(_listenerChanged);
     super.dispose();
   }
 
@@ -102,6 +114,11 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     final delta = details.primaryDelta;
     final oldDragExtent = _dragExtent;
     _dragExtent += delta!;
+
+    // Calculate the distance in pixels
+    final distance = _dragExtent - oldDragExtent;
+    // Accumulate the total distance moved
+    _totalDistanceMoved += distance;
 
     if (oldDragExtent.sign != _dragExtent.sign) {
       setState(() {
@@ -157,6 +174,9 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
     }
 
     _moveController.value = newPos;
+
+    // Call the onDragged callback with the distance in pixels
+    // widget.onDragged?.call(_totalDistanceMoved);
   }
 
   void _handleDragEnd(DragEndDetails details) {
@@ -173,6 +193,8 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
       }
     });
     _dragExtent = 0.0;
+    _totalDistanceMoved = 0.0;
+    // widget.onDragged?.call(0.0);
 
     if (widget.onSwipeEnd != null) {
       widget.onSwipeEnd!();
